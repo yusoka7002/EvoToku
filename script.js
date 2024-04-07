@@ -427,12 +427,12 @@ const getAccount = async function() {
     connectWalletBtn.disabled = true;
 
     let owner = await contract.owner();
+    let time = await contract.electionTimer();
+    if (time==0){
+        await contract.checkElectionPeriod();
+    }
     if (owner == signer._address){
       admin.style.display = "flex";
-      let time = await contract.electionTimer();
-      if (time==0){
-          contract.checkElectionPeriod();
-      }
   }
     votingStation.style.display = "flex";
     
