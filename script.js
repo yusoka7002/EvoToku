@@ -18,7 +18,7 @@ const candidate = document.querySelector('#candidate');
 const eligibleVoterAddress = document.querySelector('#eligibleVoterAddress');
 
 // configuring ethers
-const contractAddress = '0x7D56AdB2975Ba30B202E6A2503f64200e5a404c2';
+const contractAddress = '0x4d333394525e03bC55B0c866D11B37CB7a504964';
 const contractABI = [
   {
     "inputs": [],
@@ -427,6 +427,7 @@ const getAccount = async function() {
     connectWalletBtn.disabled = true;
 
     let owner = await contract.owner();
+    let time = await contract.electionTimer();
     if (time==0){
         await contract.checkElectionPeriod();
     }
