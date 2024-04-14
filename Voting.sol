@@ -25,9 +25,9 @@ contract Voting {
     }
 
     modifier electionOngoing() {
-        require(electionStarted, "No election yet.");
-        _;
-    }
+    require(electionStarted, "No election is currently ongoing.");
+    _;
+}
 
     constructor() {
         owner = msg.sender;
@@ -73,11 +73,14 @@ function startElection(string[] memory _candidates, uint256 _votingDuration, add
         return candidates;
     }
 
-    function electionTimer() public view electionOngoing returns (uint256) {
-        if(block.timestamp >= votingEnd){
-            return 0;
+    function electionTimer() public view returns (uint256) {
+        if (!electionStarted) {
+            return 0; // Return 0 or some safe value indicating no election is active
         }
-        return (votingEnd - block.timestamp);
+        if (block.timestamp >= votingEnd) {
+            return 0; // Election is over, return 0
+        }
+        return (votingEnd - block.timestamp); // Return the remaining time if election is ongoing
     }
 
     function checkElectionPeriod() public returns (bool) {
