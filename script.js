@@ -427,7 +427,6 @@ const getAccount = async function() {
     connectWalletBtn.disabled = true;
 
     let owner = await contract.owner();
-    let time = await contract.electionTimer();
     if (time==0){
         await contract.checkElectionPeriod();
     }
