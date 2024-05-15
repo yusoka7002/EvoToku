@@ -355,6 +355,7 @@ const refreshPage = function() {
         } else {
             timerMessage.textContent = "Either there's no election yet or it's already over!";
             voteForm.style.display = `none`;
+            mainBoard.style.display = `none`;
             showResultContainer.style.display = `block`;
         }
     }, 1000);
