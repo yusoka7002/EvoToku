@@ -375,6 +375,13 @@ background: #555;
     transform: translateY(-2px);
 }
 #outroPage {
+    display:none;
     font-size: 1.75rem;
     margin-bottom: 15px;
-    }
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    flex-direction: column; /* Stack children vertically */
+    background-color: transparent; /* No background color */
+    color: #333; /* Consistent text color */
+    animation: fadeIn 0.5s; /* Add fade-in animation */
+}
