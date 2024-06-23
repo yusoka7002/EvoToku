@@ -16,7 +16,7 @@ const electionDuration = document.querySelector('#electionDuration');
 const startAnElection = document.querySelector('#startAnElection');
 const candidate = document.querySelector('#candidate');
 const eligibleVoters = document.querySelector('#eligibleVoters');
-const outroMessage = document.querySelector('#outroPage')
+const outroMessage = document.querySelector('#outroPage');
 
 // configuring ethers
 const contractAddress = '0x8aEe7e8C57B30048979599f7Db98c4288C4F3714';
@@ -455,7 +455,7 @@ const sendVote = async function() {
     document.getElementById('votedCandidateName').textContent = candidateName.name; // Adjust based on actual data structure
 
     // Hide main app UI
-    document.getElementById('votingStation').style.display = 'none';
+    votingStation.style.display = 'none';
 
     // Show the outro page
     outroMessage.style.display = 'flex';
@@ -507,8 +507,6 @@ const getAccount = async function() {
             connectWalletBtn.disabled = true;
         });
     });
-
-    outroMessage.style.display = 'none';
     let time = await contract.electionTimer();
     let owner = await contract.owner();
     if (time > 0) {
@@ -528,9 +526,8 @@ const getAccount = async function() {
     }
     if (owner == signer._address){
       admin.style.display = "flex";
-  }
+    }
     votingStation.style.display = "flex";
-    
     refreshPage();
     getAllCandidates();
 };
