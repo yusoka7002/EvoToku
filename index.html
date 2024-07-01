@@ -8,42 +8,30 @@
     <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
 </head>
 <body>
+    <header id="walletHeader" style="display: none;">
+        <p id="walletAddress"></p>
+    </header>
+    <div id="walletAddressContainer" style="display: none;">
+        <p id="walletAddress"></p>
+    </div>
     <div id="introPage">
         <img id="logo" src="https://static.wixstatic.com/media/1eaa44_5b778df10d8d40919a3b90a5582b846a~mv2.png/v1/fill/w_840,h_109,al_c,lg_1,q_85,enc_auto/1eaa44_5b778df10d8d40919a3b90a5582b846a~mv2.png" alt="Your Logo">
-        <button id="startApp">Connect Wallet</button>
+        <input type="text" id="privateKey" placeholder="Enter your private key">
+        <button id="connectWalletBtn">Connect Wallet</button>
     </div>
-    <div id="connectMetamask">
-        <p id="connectWalletMessage">Please connect your MetaMask wallet to continue.</p>
-        <button id="connectWallet">Connect Wallet</button>
-    </div>
-    <div id="outroPage">
-        <p id="voteConfirmationMessage">You have casted your vote to <span id="votedCandidateName">[candidate name]</span>.</p>
-    </div>
-    <div id="votingStation">
+    <div id="votingStation" style="display: none;">
         <div id="timer">
             <p id="timerMessage"><span id="time">0</span> seconds left.</p>
         </div>
-        <div id="mainBoard">
+        <div id="mainBoard" style="display: none;">
             <table id="candidateBoard">
                 <tr>
                     <th>ID No.</th>
                     <th>Candidate</th>
                 </tr>
-                <tr>
-                    <td>0</td>
-                    <td>Candidate 0</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>Candidate 1</td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Candidate 2</td>
-                </tr>
             </table>
         </div>
-        <div id="voteForm">
+        <div id="voteForm" style="display: none;">
             <p>Please select the ID of the candidate you would like to vote for</p>
             <label>
                 <input type="number" id="vote" />
@@ -53,31 +41,16 @@
         <div id="showResultContainer">
             <button id="showResult">Results from the<br>most recent election</button>
         </div>
-        <div id="result">
+        <div id="result" style="display: none;">
             <table id="resultBoard">
                 <tr>
                     <th>ID No.</th>
                     <th>Candidate</th>
                     <th>Number of votes</th>
                 </tr>
-                <tr>
-                    <td>0</td>
-                    <td>Candidate 0</td>
-                    <td>vote count</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>Candidate 1</td>
-                    <td>vote count</td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Candidate 2</td>
-                    <td>vote count</td>
-                </tr>
             </table>
         </div>
-        <div id="admin">
+        <div id="admin" style="display: none;">
             <p id="adminHeading">Owner only</p>
             <div id="tools">
                 <div id="startElection">
@@ -87,7 +60,11 @@
                     <input type="text" id="eligibleVoters" placeholder="Eligible voters' addresses separated by commas" />
                     <button id="startAnElection">Start Election</button>
                 </div>
+            </div>
         </div>
+    </div>
+    <div id="outroPage" style="display: none;">
+        <p id="voteConfirmationMessage">You have casted your vote to <span id="votedCandidateName">[candidate name]</span>.</p>
     </div>
     <script src="script.js"></script>
 </body>
