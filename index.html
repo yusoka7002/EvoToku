@@ -8,6 +8,9 @@
     <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
 </head>
 <body>
+    <div id="outroPage" style="display: none;">
+        <p id="voteConfirmationMessage">You have casted your vote to <span id="votedCandidateName">[candidate name]</span>.</p>
+    </div>
     <header id="walletHeader" style="display: none;">
         <p id="walletAddress"></p>
     </header>
@@ -62,9 +65,6 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div id="outroPage" style="display: none;">
-        <p id="voteConfirmationMessage">You have casted your vote to <span id="votedCandidateName">[candidate name]</span>.</p>
     </div>
     <script src="script.js"></script>
 </body>
