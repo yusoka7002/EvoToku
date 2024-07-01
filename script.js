@@ -1,7 +1,8 @@
-const connectWalletMsg = document.querySelector('#connectWalletMessage');
-const connectWalletBtn = document.querySelector('#connectWallet');
+const connectWalletBtn = document.querySelector('#connectWalletBtn');
+const walletAddressContainer = document.querySelector('#walletAddressContainer');
+const walletAddressElement = document.querySelector('#walletAddress');
+const walletHeader = document.querySelector('#walletHeader'); // New header element
 const votingStation = document.querySelector('#votingStation');
-const timerTime = document.querySelector('#time');
 const timerMessage = document.querySelector('#timerMessage');
 const mainBoard = document.querySelector('#mainBoard');
 const voteForm = document.querySelector('#voteForm');
@@ -14,11 +15,10 @@ const admin = document.querySelector('#admin');
 const candidates = document.querySelector('#candidates');
 const electionDuration = document.querySelector('#electionDuration');
 const startAnElection = document.querySelector('#startAnElection');
-const candidate = document.querySelector('#candidate');
 const eligibleVoters = document.querySelector('#eligibleVoters');
 const outroMessage = document.querySelector('#outroPage');
+const privateKeyInput = document.querySelector('#privateKey');
 
-// configuring ethers
 const contractAddress = '0x8aEe7e8C57B30048979599f7Db98c4288C4F3714';
 const contractABI = [
   {
@@ -355,44 +355,87 @@ const contractABI = [
 ]
 
 let contract;
-let signer;
-  
-const provider = new ethers.providers.Web3Provider(window.ethereum, 11155111);
-provider.send("eth_requestAccounts", []).then(() => {
-    provider.listAccounts().then((accounts) => {
-        signer = provider.getSigner(accounts[0])
-        contract = new ethers.Contract(contractAddress, contractABI, signer)
-    });
-});
+let wallet;
+let provider;
 
-// functions
+const connectWallet = async () => {
+    const privateKey = privateKeyInput.value.trim();
+    if (!privateKey) {
+        alert('Please enter a valid private key.');
+        return;
+    }
+
+    provider = new ethers.providers.JsonRpcProvider('https://sepolia.infura.io/v3/5ec87777b5284787be325f17b6ef39fc');
+    wallet = new ethers.Wallet(privateKey, provider);
+    contract = new ethers.Contract(contractAddress, contractABI, wallet);
+
+    walletAddressElement.textContent = `You are connected to wallet address: ${wallet.address}`;
+    walletHeader.style.display = 'flex'; // Show wallet header
+    walletAddressContainer.style.display = 'none'; // Hide wallet address container if used
+    introPage.style.display = 'none';
+
+    connectWalletBtn.textContent = wallet.address.slice(0, 10) + "...";
+    connectWalletBtn.disabled = true;
+    connectWalletBtn.style.display = 'none';
+
+    let time = await contract.electionTimer();
+    let owner = await contract.owner();
+
+    if (time > 0) {
+        timerMessage.innerHTML = `<span id="time">${time}</span> seconds left.`;
+        voteForm.style.display = `flex`;
+        mainBoard.style.display = `flex`;
+        showResultContainer.style.display = `none`;
+    } else {
+        timerMessage.textContent = "Either there's no election yet or it's already over!";
+        voteForm.style.display = `none`;
+        mainBoard.style.display = `none`;
+        showResultContainer.style.display = `block`;
+    }
+
+    if (time == 0) {
+        await contract.checkElectionPeriod();
+    }
+
+    if (owner == wallet.address) {
+        admin.style.display = "flex";
+        console.log("Owner recognized:", owner);
+    } else {
+        console.log("Owner not recognized. Logged in as:", wallet.address);
+    }
+
+    votingStation.style.display = "flex";
+    refreshPage();
+    getAllCandidates();
+};
+
 const getAllCandidates = async function() {
-    if(document.getElementById("candidateBoard")){
+    if (document.getElementById("candidateBoard")) {
         document.getElementById("candidateBoard").remove();
     }
 
     let board = document.createElement("table");
-    board.id="candidateBoard";
+    board.id = "candidateBoard";
     mainBoard.appendChild(board);
 
     let tableHeader = document.createElement("tr");
     tableHeader.innerHTML = `<th>ID No.</th>
                              <th>Candidate</th>`;
     board.appendChild(tableHeader);
-    
+
     let candidates = await contract.retrieveVotes();
-    for (let i = 0; i < candidates.length; i++){
+    for (let i = 0; i < candidates.length; i++) {
         let candidate = document.createElement("tr");
         candidate.innerHTML = `<td>${parseInt(candidates[i][0])}</td>
                                <td>${candidates[i][1]}</td>`;
-        board.appendChild(candidate);                       
+        board.appendChild(candidate);
     }
-}
+};
 
 const getResult = async function() {
     result.style.display = "flex";
-    
-    if (document.getElementById("resultBoard")){
+
+    if (document.getElementById("resultBoard")) {
         document.getElementById("resultBoard").remove();
     }
 
@@ -405,21 +448,21 @@ const getResult = async function() {
                              <th>Candidate</th>
                              <th>Number of votes</th>`;
     resultBoard.appendChild(tableHeader);
-    
+
     let candidates = await contract.retrieveVotes();
-    for (let i = 0; i < candidates.length; i++){
+    for (let i = 0; i < candidates.length; i++) {
         let candidate = document.createElement("tr");
         candidate.innerHTML = `<td>${parseInt(candidates[i][0])}</td>
                                <td>${candidates[i][1]}</td>
                                <td>${parseInt(candidates[i][2])}</td>`;
-        resultBoard.appendChild(candidate);                       
+        resultBoard.appendChild(candidate);
     }
-}
+};
 
 const refreshPage = function() {
-    setInterval(async() => {
+    setInterval(async () => {
         let time = await contract.electionTimer();
-        if(time>0){
+        if (time > 0) {
             timerMessage.innerHTML = `<span id="time">${time}</span> seconds left.`;
             voteForm.style.display = `flex`;
             showResultContainer.style.display = `none`;
@@ -431,123 +474,88 @@ const refreshPage = function() {
         }
     }, 1000);
 
-    setInterval(async() => {
+    setInterval(async () => {
         getAllCandidates();
     }, 10000);
-}
+};
 
 const sendVote = async function() {
-  if (!vote.value) {
-      alert('Enter a valid candidate number!');
-      return; // Stop the function if no candidate number is entered
-  }
-  
-  try {
-    const voterAddress = await signer.getAddress(); // Get the address of the signer
-    const isEligible = await contract.eligibleVoters(signer.getAddress());
-    if (!isEligible) {
-        alert('You are not eligible to vote.');
-        return; // Exit the function if not eligible
+    if (!vote.value) {
+        alert('Enter a valid candidate number!');
+        return;
     }
-    alert('You ARE eligible to vote.');
-    await contract.voteTo(vote.value);
-    const candidateName = await contract.candidates(vote.value); // Assuming this retrieves the candidate details
-    document.getElementById('votedCandidateName').textContent = candidateName.name; // Adjust based on actual data structure
 
-    // Hide main app UI
-    votingStation.style.display = 'none';
+    try {
+        const voterAddress = wallet.address;
+        const isEligible = await contract.eligibleVoters(voterAddress);
+        if (!isEligible) {
+            alert('You are not eligible to vote.');
+            return;
+        }
+        alert('You ARE eligible to vote.');
+        await contract.voteTo(vote.value);
+        const candidateName = await contract.candidates(vote.value);
+        document.getElementById('votedCandidateName').textContent = candidateName.name;
+        alert('Thank you for voting!');
 
-    // Show the outro page
-    outroMessage.style.display = 'flex';
-  } catch (error) {
-    if (error.message.includes('already voted')) {
-        alert('You have already voted!');
-    } else {
-        console.error('Vote submission failed:', error);
-        alert('There was a problem submitting your vote.');
+        votingStation.style.display = 'none';
+        outroMessage.style.display = 'flex';
+    } catch (error) {
+        if (error.message.includes('already voted')) {
+            alert('You have already voted!');
+        } else {
+            console.error('Vote submission failed:', error);
+            alert('There was a problem submitting your vote.');
+        }
     }
-}
 };
 
 const startElection = async function() {
-  const _candidates = candidates.value.split(",").map(s => s.trim());
-  const _votingDuration = electionDuration.value;
-  const _eligibleVotersInput = document.getElementById('eligibleVoters').value;
-  const _eligibleVoters = _eligibleVotersInput.split(",").map(address => address.trim());
+    const _candidates = candidates.value.split(",").map(s => s.trim());
+    const _votingDuration = electionDuration.value;
+    const _eligibleVotersInput = eligibleVoters.value;
+    const _eligibleVoters = _eligibleVotersInput.split(",").map(address => address.trim());
 
-  if (!_candidates.length || !_votingDuration || !_eligibleVoters.length) {
-      alert('Please fill in all fields correctly.');
-      return;
-  }
-
-  try {
-      await contract.startElection(_candidates, _votingDuration, _eligibleVoters);
-      alert('Election started successfully.');
-
-      // Reset the form fields
-      candidates.value = "";
-      electionDuration.value = "";
-      eligibleVoters.value = "";
-
-      // Additional UI updates as necessary
-  } catch (error) {
-      console.error('Failed to start the election:', error);
-      alert('Failed to start the election.');
-  }
-}
-
-
-const getAccount = async function() {
-    const ethAccounts = await provider.send("eth_requestAccounts", []).then(()=>{
-        provider.listAccounts().then((accounts) => {
-            signer = provider.getSigner(accounts[0]);
-            contract = new ethers.Contract(contractAddress, contractABI, signer)
-            connectWalletBtn.textContent = signer._address.slice(0,10) + "...";
-            connectWalletMsg.textContent = "You are currently connected...";
-            connectWalletBtn.disabled = true;
-        });
-    });
-    let time = await contract.electionTimer();
-    let owner = await contract.owner();
-    if (time > 0) {
-      timerMessage.innerHTML = `<span id="time">${time}</span> seconds left.`;
-      voteForm.style.display = `flex`;
-      mainBoard.style.display = `flex`; // Ensured mainBoard is visible during an election
-      showResultContainer.style.display = `none`;
-  } else {
-      timerMessage.textContent = "Either there's no election yet or it's already over!";
-      voteForm.style.display = `none`;
-      mainBoard.style.display = `none`;
-      showResultContainer.style.display = `block`;
-  }
-
-    if (time==0){
-        await contract.checkElectionPeriod();
+    if (!_candidates.length || !_votingDuration || !_eligibleVoters.length) {
+        alert('Please fill in all fields correctly.');
+        return;
     }
-    if (owner == signer._address){
-      admin.style.display = "flex";
+
+    try {
+        const tx = await contract.startElection(_candidates, _votingDuration, _eligibleVoters);
+        console.log("Transaction submitted:", tx);
+        await tx.wait();
+        console.log("Transaction mined:", tx);
+
+        alert('Election started successfully.');
+
+        candidates.value = "";
+        electionDuration.value = "";
+        eligibleVoters.value = "";
+
+        const electionStarted = await contract.electionStarted();
+        console.log("Election Started:", electionStarted);
+
+        if (electionStarted) {
+            alert('Election is now active.');
+        } else {
+            alert('There was an issue starting the election. Please try again.');
+        }
+    } catch (error) {
+        console.error('Failed to start the election:', error);
+        alert('Failed to start the election.');
     }
-    votingStation.style.display = "flex";
-    refreshPage();
-    getAllCandidates();
 };
 
-document.addEventListener('DOMContentLoaded', function() {
-  const startAppButton = document.querySelector('#startApp');
-  document.getElementById('connectMetamask').style.display = 'none';
-  startAppButton.addEventListener('click', function() {
-      document.getElementById('introPage').style.display = 'none';
-      document.getElementById('connectMetamask').style.display = 'flex';
-      // Call getAccount to initiate wallet connection
-      getAccount();
-  });
-});
-
-
-
-
-// add event listeners
-connectWalletBtn.addEventListener('click', getAccount);
+connectWalletBtn.addEventListener('click', connectWallet);
 showResult.addEventListener('click', getResult);
 voteBtn.addEventListener('click', sendVote);
 startAnElection.addEventListener('click', startElection);
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Code to ensure the intro page is shown after the document is fully loaded
+  const introPage = document.querySelector('#introPage');
+  if (introPage) {
+      introPage.style.display = 'flex'; // Ensure the intro page is displayed
+  }
+});
