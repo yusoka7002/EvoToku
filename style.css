@@ -15,6 +15,81 @@ body {
     color: #333;
 }
 
+header {
+    width: 100%;
+    padding: 10px;
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#walletAddress {
+    font-size: 1rem;
+    color: #333;
+}
+
+#introPage {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Make it take the full viewport height */
+    background-color: #f5f5f5;
+    transition: margin-top 0.3s ease;
+    margin-top: 50px; /* Adjust based on wallet header height */
+}
+
+#introPage.connected {
+    margin-top: 100px; /* Ensure enough space below the header */
+}
+
+#privateKey {
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    transition: border-color .15s ease-in-out, box-shadow 0.2s ease;
+    width: 80%; /* Adjust based on your layout needs */
+    font-size: 1rem; /* Adjust as needed */
+}
+
+#privateKey:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 8px rgba(128, 81, 255, 0.5);
+}
+
+#connectWalletBtn {
+    padding: 12px 24px;
+    border-radius: 8px;
+    color: white;
+    background: linear-gradient(45deg, #8051FF, #FF7FE8);
+    cursor: pointer;
+    border: none;
+    font-size: 1.25rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    margin-top: 10px; /* Adjust as needed */
+}
+
+#connectWalletBtn:hover {
+    background: linear-gradient(45deg, #6E42D9, #F56FE8);
+}
+
+#connectWalletBtn:active, 
+#connectWalletBtn:focus {
+    outline: none;
+    background: linear-gradient(45deg, #6E42D9, #F56FE8);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
 #connectMetamask {
     width: 100%;
     padding: 20px;
@@ -35,26 +110,10 @@ body {
     color: #333;
 }
 
-#connectWallet {
-    padding: 12px 24px;
-    border-radius: 8px;
-    color: white;
-    background: linear-gradient(45deg, #8051FF, #FF7FE8);
-    cursor: pointer;
-    border: none;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    transition: background 0.3s ease, box-shadow 0.3s ease;
-}
-
-#connectWallet:active, #connectWallet:focus {
-    outline: none;
-    background: linear-gradient(45deg, #6E42D9, #F56FE8);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-
 #votingStation {
     flex-direction: column;
     display: none;
+    margin-top: 60px; /* Ensure enough space below the header */
 }
 
 #timer {
@@ -146,6 +205,7 @@ label {
     background-color: #218838;
     outline: none;
 }
+
 #showResultContainer {
     display: flex;
     justify-content: center;
@@ -153,188 +213,84 @@ label {
     padding: 20px;
     margin-top: 20px;
 }
+
 #showResult {
-font-size: 1.25rem;
-font-weight: bold;
-padding: 12px 24px;
-border: none;
-border-radius: 5px;
-color: #212529;
-background-color: #FF7FE8;
-transition: background-color 0.15s ease-in-out, transform 0.2s ease;
-cursor: pointer;
+    font-size: 1.25rem;
+    font-weight: bold;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 5px;
+    color: #212529;
+    background-color: #FF7FE8;
+    transition: background-color 0.15s ease-in-out, transform 0.2s ease;
+    cursor: pointer;
 }
 
 #showResult:active, #showResult:focus {
-background-color: #E06FE8;
-outline: none;
+    background-color: #E06FE8;
+    outline: none;
 }
 
 #result {
-display: none;
-margin-top: 20px;
-border-top: 2px solid #8051FF;
-padding-top: 20px;
-background-color: #fff;
-box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-border-radius: 8px;
-animation: fadeIn 0.5s;
+    display: none;
+    margin-top: 20px;
+    border-top: 2px solid #8051FF;
+    padding-top: 20px;
+    background-color: #fff;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    border-radius: 8px;
+    animation: fadeIn 0.5s;
 }
 
 #electionMessage {
-font-size: 1.5rem;
-font-weight: bold;
-color: #212529;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #212529;
 }
 
 #admin {
-max-width: 700px;
-font-weight: bold;
-padding: 20px;
-margin: 20px auto;
-border-top: 2px solid #dee2e6;
-display: none;
-flex-direction: column;
-background-color: #fff;
-box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-border-radius: 8px;
+    max-width: 700px;
+    font-weight: bold;
+    padding: 20px;
+    margin: 20px auto;
+    border-top: 2px solid #dee2e6;
+    display: none;
+    flex-direction: column;
+    background-color: #fff;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    border-radius: 8px;
 }
 
 #adminHeading {
-font-size: 1.75rem;
-margin-bottom: 15px;
+    font-size: 1.75rem;
+    margin-bottom: 15px;
 }
 
 #tools {
-display: flex;
-flex-wrap: wrap;
-justify-content: center;
-align-items: baseline;
-margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: baseline;
+    margin-top: 20px;
 }
 
 #startElection,
 #addCandidate {
-display: flex;
-flex-direction: column;
-justify-content: center;
-width: 90%;
-max-width: 500px;
-padding: 20px;
-margin: 10px;
-border: 1px solid #ced4da;
-border-radius: 10px;
-background-color: #e9ecef;
-transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 90%;
+    max-width: 500px;
+    padding: 20px;
+    margin: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 10px;
+    background-color: #e9ecef;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 #startElection input,
 #addCandidate input {
-padding: 10px;
-margin: 10px 0;
-border: 1px solid #ced4da;
-border-radius: 5px;
-transition: border-color .15s ease-in-out, box-shadow 0.2s ease;
-}
-
-#startElection input:focus,
-#addCandidate input:focus {
-border-color: #80bdff;
-outline: 0;
-box-shadow: 0 0 8px rgba(128, 81, 255, 0.5);
-}
-
-#startElection button,
-#addCandidate button {
-font-size: 1.25rem;
-padding: 10px 0;
-margin-top: 10px;
-color: white;
-background: linear-gradient(45deg, #8051FF, #FF7FE8);
-border: none;
-border-radius: 5px;
-cursor: pointer;
-transition: background-color .15s ease-in-out, box-shadow 0.3s ease;
-}
-
-#startElection button:active,
-#addCandidate button:active,
-#startElection button:focus,
-#addCandidate button:focus {
-background: linear-gradient(45deg, #6E42D9, #F56FE8);
-outline: none;
-}
-
-/* Enhancements and Animations */
-button:hover,
-input:hover,
-#startElection button:hover,
-#addCandidate button:hover {
-box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-transform: translateY(-2px);
-}
-
-input:focus,
-button:focus,
-#startElection input:focus,
-#addCandidate input:focus {
-box-shadow: 0 0 0 0.2rem rgba(128, 81, 255, 0.5);
-}
-
-/* Custom Scrollbar for Better Aesthetics */
-::-webkit-scrollbar {
-width: 10px;
-}
-
-::-webkit-scrollbar-track {
-background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-background: #888;
-}
-
-::-webkit-scrollbar-thumb:hover {
-background: #555;
-}
-#introPage {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh; /* Make it take the full viewport height */
-    background-color: #f5f5f5;
-}
-
-#introPage #logo {
-    max-width: 300px; /* Adjust based on your logo size */
-    margin-bottom: 50px;
-}
-
-#introPage #startApp {
-    padding: 12px 24px;
-    border-radius: 8px;
-    color: white;
-    background: linear-gradient(45deg, #8051FF, #FF7FE8);
-    cursor: pointer;
-    border: none;
-    font-size: 1.25rem;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    transition: background 0.3s ease, box-shadow 0.3s ease;
-}
-
-#introPage #startApp:hover {
-    background: linear-gradient(45deg, #6E42D9, #F56FE8);
-}
-
-#introPage #startApp:active, 
-#introPage #startApp:focus {
-    outline: none;
-    background: linear-gradient(45deg, #6E42D9, #F56FE8);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-/* Styling for the "Eligible Voters" Input, matching the existing form inputs */
-#eligibleVoters {
     padding: 10px;
     margin: 10px 0;
     border: 1px solid #ced4da;
@@ -342,15 +298,15 @@ background: #555;
     transition: border-color .15s ease-in-out, box-shadow 0.2s ease;
 }
 
-#eligibleVoters:focus {
+#startElection input:focus,
+#addCandidate input:focus {
     border-color: #80bdff;
     outline: 0;
     box-shadow: 0 0 8px rgba(128, 81, 255, 0.5);
 }
 
-/* Assuming there might be a button specifically for adding eligible voters, 
-   applying the same button styling conventions as your other buttons */
-#addEligibleVoters {
+#startElection button,
+#addCandidate button {
     font-size: 1.25rem;
     padding: 10px 0;
     margin-top: 10px;
@@ -360,28 +316,45 @@ background: #555;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color .15s ease-in-out, box-shadow 0.3s ease;
-    width: 100%; /* Match the input field width */
 }
 
-#addEligibleVoters:active, 
-#addEligibleVoters:focus {
+#startElection button:active,
+#addCandidate button:active,
+#startElection button:focus,
+#addCandidate button:focus {
     background: linear-gradient(45deg, #6E42D9, #F56FE8);
     outline: none;
 }
 
-/* Enhance hover effects for the button */
-#addEligibleVoters:hover {
+/* Enhancements and Animations */
+button:hover,
+input:hover,
+#startElection button:hover,
+#addCandidate button:hover {
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     transform: translateY(-2px);
 }
-#outroPage {
-    display:none;
-    font-size: 1.75rem;
-    margin-bottom: 15px;
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
-    flex-direction: column; /* Stack children vertically */
-    background-color: transparent; /* No background color */
-    color: #333; /* Consistent text color */
-    animation: fadeIn 0.5s; /* Add fade-in animation */
+
+input:focus,
+button:focus,
+#startElection input:focus,
+#addCandidate input:focus {
+    box-shadow: 0 0 0 0.2rem rgba(128, 81, 255, 0.5);
+}
+
+/* Custom Scrollbar for Better Aesthetics */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
