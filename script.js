@@ -19,7 +19,7 @@ const eligibleVoters = document.querySelector('#eligibleVoters');
 const outroMessage = document.querySelector('#outroPage');
 const privateKeyInput = document.querySelector('#privateKey');
 
-const contractAddress = '0x8aEe7e8C57B30048979599f7Db98c4288C4F3714';
+const contractAddress = '0x10a5Cbb7F4D92BaF73e6C17099F1d1FDCD1e96A1';
 const contractABI = [
   {
     "inputs": [],
